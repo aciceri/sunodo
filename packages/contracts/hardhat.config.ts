@@ -2,6 +2,9 @@ import path from "path";
 import { HardhatUserConfig } from "hardhat/config";
 import { HttpNetworkUserConfig } from "hardhat/types";
 import { getSingletonFactoryInfo } from "@safe-global/safe-singleton-factory";
+import { subtask } from "hardhat/config";
+import { TASK_COMPILE_SOLIDITY_GET_SOLC_BUILD } from "hardhat/builtin-tasks/task-names";
+import path = require("path");
 
 import "@nomicfoundation/hardhat-verify";
 import "@nomiclabs/hardhat-ethers";
@@ -132,5 +135,24 @@ const config: HardhatUserConfig = {
         }
     },
 };
+
+subtask(
+  TASK_COMPILE_SOLIDITY_GET_SOLC_BUILD,
+  async (args: any, hre: any, runSuper: any) => {
+    if (args.solcVersion === "0.8.20") {
+      return {
+        compilerPath: path.join(
+          __dirname,
+          "soljson-v0.8.20+commit.a1b79de6.js"
+        ),
+        isSolcJs: true,
+        version: args.solcVersion,
+        longVersion: "soljson-v0.8.20+commit.a1b79de6.js",
+      };
+    }
+
+    return runSuper();
+  }
+);
 
 export default config;
